@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bankomat_API", "Bankomat_API\Bankomat_API.csproj", "{A2AE5345-B655-43D4-90F6-1C19A4C339DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2AE5345-B655-43D4-90F6-1C19A4C339DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2AE5345-B655-43D4-90F6-1C19A4C339DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2AE5345-B655-43D4-90F6-1C19A4C339DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2AE5345-B655-43D4-90F6-1C19A4C339DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A7F64D2-9D0A-4B03-BD53-85432938ED85}
+	EndGlobalSection
+EndGlobal
