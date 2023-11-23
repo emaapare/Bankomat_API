@@ -5,10 +5,10 @@ namespace Bankomat_API.Dto
 {
     public class BancaDto
     {
+
+        public int Id { get; set; }
         public string Nome { get; set; }
 
-        [JsonPropertyName("Funzionalita")]
-        public List<FunzionalitumDto> BancheFunzionalita { get; set; }
     }
 
 }

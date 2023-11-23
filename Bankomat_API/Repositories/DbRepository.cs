@@ -2,6 +2,7 @@
 using Bankomat_API.Context;
 using Bankomat_API.Dto;
 using Bankomat_API.Model;
+using Bankomat_API.Profiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bankomat_API.Repositories
@@ -108,13 +109,14 @@ namespace Bankomat_API.Repositories
 
         public async Task<IEnumerable<Banche>> GetBancheAsync()
         {
-            var banches = await _context.Banches.ToListAsync();
+            var banches = await _context.Banches.OrderBy(x => x.Id).ToListAsync();
             return banches;
         }
 
-        public Task<Banche> GetBancaAsync(long id)
+        public async Task<Banche> GetBancaAsync(long id)
         {
-            throw new NotImplementedException();
+            var banca = await _context.Banches.FirstOrDefaultAsync(x => x.Id == id);
+            return banca;
         }
 
         public async Task<List<BancheFunzionalitum>> GetFunzionalitaBancaAsync(int bancaId)
@@ -124,9 +126,65 @@ namespace Bankomat_API.Repositories
                 .ToListAsync();
         }
 
-        public Task<Funzionalitum> GetFunzionalitaBancaAsync()
+        public async Task<Utenti> DoLoginAsync(string nomeUtente, string password)
         {
-            throw new NotImplementedException();
+            var utenteLoggato = await _context.Utentis.FirstOrDefaultAsync(c => c.NomeUtente == nomeUtente && c.Password == password);
+
+            if (utenteLoggato != null)
+            {
+                if (!await IsUtenteBloccatoAsync(utenteLoggato.Id))
+                {
+                    return utenteLoggato;
+                }
+            }
+            return null;
         }
+
+        public async Task<IEnumerable<Funzionalitum>> GetFunzionalitasBancaAsync(long idBanca)
+        {
+            var banca = await GetBancaAsync(idBanca);
+            if (banca == null)
+            {
+                return null;
+            }
+            return await _context.Funzionalita.Where(x => x.BancheFunzionalita.Where(y => y.IdBanca == idBanca).Count() > 0).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Funzionalitum>> GetFunzionalitaAsync()
+        {
+            var funzionalita = await _context.Funzionalita.OrderBy(x => x.Id).ToListAsync();
+            return funzionalita;
+        }
+
+        public async Task AttivaFunzionalitaBancaAsync(int bancaId, int functionalityId)
+        {
+            if (bancaId < 0 || bancaId > _context.BancheFunzionalita.Count())
+            {
+                throw new ArgumentNullException(nameof(bancaId));
+            };
+
+            var cc = new BancheFunzionalitum()
+            {
+                Id = 0,
+                IdBanca = bancaId,
+                IdFunzionalita = functionalityId
+            };
+
+            _context.BancheFunzionalita.Add(cc);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DisattivaFunzionalitaBancaAsync(int bancaId, int functionalityId)
+        {
+            var bancaFunzionalita = await _context.BancheFunzionalita
+                .FirstOrDefaultAsync(bf => bf.IdBanca == bancaId && bf.IdFunzionalita == functionalityId);
+
+            if (bancaFunzionalita != null)
+            {
+                _context.BancheFunzionalita.Remove(bancaFunzionalita);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

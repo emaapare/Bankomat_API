@@ -22,19 +22,76 @@ namespace Bankomat_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BancaDto>>> GetBancheAsync()
         {
-            var banche = await _repo.GetBancheAsync();
-
-            var bancheDto = banche.Select(b =>
-            {
-                var bancaDto = _mapper.Map<BancaDto>(b);
-                bancaDto.BancheFunzionalita = _mapper.Map<List<FunzionalitumDto>>(
-                    b.BancheFunzionalita.Select(f => f.IdFunzionalitaNavigation).ToList()
-                );
-                return bancaDto;
-            }).ToList();
-
-            return Ok(bancheDto);
+            var res = _mapper.Map<List<BancaDto>>(await _repo.GetBancheAsync());
+            return Ok(res);
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequestDto loginRequest)
+        {
+            var utenteAutenticato = await _repo.DoLoginAsync(loginRequest.Username, loginRequest.Password);
+
+            if (utenteAutenticato != null)
+            {
+                var utenteDto = _mapper.Map<UtenteDto>(utenteAutenticato);
+                return Ok(new LoginResponseDto { Success = true, Utente = utenteDto });
+            }
+            else
+            {
+                return NotFound(new LoginResponseDto { Success = false, Message = "Utente non esistente o password errata" });
+            }
+        }
+
+        [HttpGet("funzionalita/{bancaId}")]
+        public async Task<ActionResult<IEnumerable<BancheFunzionalitum>>> GetFunzionalitasBancaByIdAsync(int bancaId)
+        {
+
+            var funzionalitas = await _repo.GetFunzionalitasBancaAsync(bancaId);
+            if (funzionalitas == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<IEnumerable<Funzionalitum>, IEnumerable<FunzionalitumDto>>(funzionalitas));
+        }
+
+        [HttpGet("funzionalita")]
+        public async Task<ActionResult<IEnumerable<BancheFunzionalitum>>> GetFunzionalitaAsync()
+        {
+
+            var funzionalitas = await _repo.GetFunzionalitaAsync();
+            if (funzionalitas == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<IEnumerable<Funzionalitum>, IEnumerable<FunzionalitumDto>>(funzionalitas));
+        }
+
+        [HttpPost("attiva/{bankId}/{functionalityId}")]
+        public async Task<IActionResult> AttivaFunzionalita(int bankId, int functionalityId)
+        {
+            try
+            {
+                await _repo.AttivaFunzionalitaBancaAsync(bankId, functionalityId);
+                return Ok("Funzionalità attivata con successo.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Errore durante l'attivazione della funzionalità: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("disattiva/{bankId}/{functionalityId}")]
+        public async Task<IActionResult> DisattivaFunzionalita(int bankId, int functionalityId)
+        {
+            try
+            {
+                await _repo.DisattivaFunzionalitaBancaAsync(bankId, functionalityId);
+                return Ok("Funzionalità disattivata con successo.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Errore durante la disattivazione della funzionalità: {ex.Message}");
+            }
+        }
     }
 }

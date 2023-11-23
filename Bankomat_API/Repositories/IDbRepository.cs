@@ -17,6 +17,11 @@ namespace Bankomat_API.Repositories
         Task DeleteUtenteAsync(Utenti utente);
         Task<IEnumerable<Banche>> GetBancheAsync();
         Task <Banche> GetBancaAsync(long id);
-        Task<Funzionalitum> GetFunzionalitaBancaAsync();
+        Task<Utenti> DoLoginAsync(string nomeUtente, string password);
+        Task<IEnumerable<Funzionalitum>> GetFunzionalitasBancaAsync(long idBanca);
+        Task<IEnumerable<Funzionalitum>> GetFunzionalitaAsync();
+        Task AttivaFunzionalitaBancaAsync(int bancaId, int functionalityId);
+
+        Task DisattivaFunzionalitaBancaAsync(int bancaId, int functionalityId);
     }
 }

@@ -28,6 +28,8 @@ public partial class SoluzioneBankomatContext : DbContext
 
     public virtual DbSet<Utenti> Utentis { get; set; }
 
+    public virtual DbSet<Admin> Admins { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("data source=.; initial catalog=soluzione_bankomat; User ID=sa; Password=password123; Trusted_Connection=true; TrustServerCertificate=true");
 
@@ -113,6 +115,24 @@ public partial class SoluzioneBankomatContext : DbContext
             entity.HasOne(d => d.IdBancaNavigation).WithMany(p => p.Utentis)
                 .HasForeignKey(d => d.IdBanca)
                 .HasConstraintName("FK_Utenti_Banche");
+        });
+
+        modelBuilder.Entity<Admin>(entity =>
+        {
+            entity.ToTable("Admin");
+
+            entity.HasIndex(e => e.Id, "IX_Admin").IsUnique();
+
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Password)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.IdBancaNavigation).WithMany(p => p.Admins)
+                .HasForeignKey(d => d.IdBanca)
+                .HasConstraintName("FK_Admin_Banche");
         });
 
         OnModelCreatingPartial(modelBuilder);

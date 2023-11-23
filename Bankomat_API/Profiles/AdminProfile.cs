@@ -4,12 +4,11 @@ using Bankomat_API.Model;
 
 namespace Bankomat_API.Profiles
 {
-    public class BancheProfile : Profile
+    public class AdminProfile : Profile
     {
-        public BancheProfile()
+        public AdminProfile()
         {
-            CreateMap<Banche, BancaDto>().ReverseMap();
+            CreateMap<Admin, AdminDto>().ReverseMap();
         }
     }
-
 }

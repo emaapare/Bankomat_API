@@ -12,4 +12,5 @@ public partial class Banche
     public virtual ICollection<BancheFunzionalitum> BancheFunzionalita { get; set; } = new List<BancheFunzionalitum>();
 
     public virtual ICollection<Utenti> Utentis { get; set; } = new List<Utenti>();
+    public virtual ICollection<Admin> Admins { get; set; } = new List<Admin>();
 }
